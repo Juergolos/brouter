@@ -808,8 +808,14 @@ public class RoutingEngine extends Thread {
 
   }
 
-  private void logException(Throwable t) {
-    errorMessage = t instanceof RuntimeException ? t.getMessage() : t.toString();
+private void logException(Throwable t) {
+    StringBuilder sb = new StringBuilder();
+    sb.append(t.toString());
+    StackTraceElement[] trace = t.getStackTrace();
+    for (int i = 0; i < Math.min(6, trace.length); i++) {
+      sb.append(" | at ").append(trace[i].toString());
+    }
+    errorMessage = sb.toString();
     logInfo("Error (linksProcessed=" + linksProcessed + " open paths: " + openSet.getSize() + "): " + errorMessage);
   }
 
