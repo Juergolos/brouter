@@ -739,7 +739,7 @@ public class RoutingEngine extends Thread {
           if (tmp.message != null) {
             MessageData md = tmp.message.copy();
             String msg = md.wayKeyValues;
-            if (!msg.equals(lastMsg)) {
+            if (msg != null && !msg.equals(lastMsg)) {
               boolean revers = msg.contains("reversedirection=yes");
               int pos = msg.indexOf("incline=");
               if (pos != -1) {
@@ -775,7 +775,7 @@ public class RoutingEngine extends Thread {
                 tmpincline = diff / (distRest / 100.);
               }
             }
-            lastMsg = msg;
+            if (msg != null) lastMsg = msg;
           }
           int tmpdist = tmp.calcDistance(tmpPt);
           distRest -= tmpdist;
@@ -783,7 +783,9 @@ public class RoutingEngine extends Thread {
             incline = tmpincline;
           selev = (selev + (tmpdist / 100. * incline));
           tmp.setSElev((short) selev);
-          tmp.message.ele = (short) selev;
+          if (tmp.message != null) {
+            tmp.message.ele = (short) selev;
+          }
           tmpPt = tmp;
         }
         dist = 0;
@@ -1108,7 +1110,7 @@ private void logException(Throwable t) {
     OsmPathElement ptMeeting = tt.nodes.get(indexMeetingBack);
     OsmPathElement ptEnd = t.nodes.get(indexEnd);
 
-    boolean bMeetingIsOnRoundabout = ptMeeting.message.isRoundabout();
+    boolean bMeetingIsOnRoundabout = ptMeeting.message != null && ptMeeting.message.isRoundabout();
     boolean bMeetsRoundaboutStart = false;
     int wayDistance = 0;
 
@@ -1144,7 +1146,7 @@ private void logException(Throwable t) {
     List<OsmPathElement> removeList = new ArrayList<>();
     if (!bMeetsRoundaboutStart) {
       indexStartBack = indexMeetingBack;
-      while (!tt.nodes.get(indexStartBack).message.isRoundabout()) {
+      while (tt.nodes.get(indexStartBack).message == null || !tt.nodes.get(indexStartBack).message.isRoundabout()) {
         indexStartBack--;
         if (indexStartBack == 2) break;
       }
@@ -1180,7 +1182,7 @@ private void logException(Throwable t) {
     for (i = 0; i < indexEnd; i++) {
       OsmPathElement n = t.nodes.get(i);
       if (n.positionEquals(bMeetsRoundaboutStart ? ptStart : ptEnd)) break;
-      if (!bMeetingIsOnRoundabout && !bMeetsRoundaboutStart && n.message.isRoundabout()) break;
+      if (!bMeetingIsOnRoundabout && !bMeetsRoundaboutStart && n.message != null && n.message.isRoundabout()) break;
 
       OsmTrack.OsmPathElementHolder detours = t.getFromDetourMap(n.getIdFromPos());
       if (detours != null) {
@@ -1322,7 +1324,7 @@ private void logException(Throwable t) {
         }
         if (!bForeRoundAbout &&
            tmpfore.message != null && tmpfore.message.isRoundabout() ||
-          (tmpback.positionEquals(tmpfore) && tmpback.message.isRoundabout())) {
+          (tmpback.positionEquals(tmpfore) && tmpback.message != null && tmpback.message.isRoundabout())) {
           bForeRoundAbout = true;
           indexForeFound = indexfore;
         }
