@@ -868,7 +868,7 @@ private void logException(Throwable t) {
       } catch (RoutingIslandException rie) {
         if (routingContext.useDynamicDistance) {
           for (MatchedWaypoint mwp : matchedWaypoints) {
-            if (mwp.name.contains("_add")) {
+            if (mwp.name != null && mwp.name.contains("_add")) {
               long n1 = mwp.node1.getIdFromPos();
               long n2 = mwp.node2.getIdFromPos();
               islandNodePairs.addTempPair(n1, n2);
