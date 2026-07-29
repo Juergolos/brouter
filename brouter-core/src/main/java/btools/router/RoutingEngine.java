@@ -1801,9 +1801,12 @@ private void logException(Throwable t) {
     lastAirDistanceCostFactor = 0.;
     guideTrack = track;
     startTime = System.currentTimeMillis(); // reset timeout...
-    try {
+try {
       OsmTrack tt = findTrack("re-tracking", startWp, endWp, null, refTrack, false);
-      if (tt == null) throw new IllegalArgumentException("error re-tracking track");
+      if (tt == null) {
+        logInfo("re-tracking fehlgeschlagen - nutze die bereits gefundene Route als Rueckfall");
+        return track;
+      }
       return tt;
     } finally {
       guideTrack = null;
