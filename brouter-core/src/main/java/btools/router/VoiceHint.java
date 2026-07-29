@@ -210,7 +210,7 @@ public class VoiceHint {
   }
 
   public boolean hasGiveWay() {
-    if (oldWay != null && oldWay.nodeKeyValues != null) {
+    if (oldWay != null && oldWay.nodeKeyValues != null && oldWay.wayKeyValues != null) {
       if (oldWay.wayKeyValues.contains("reversedirection=yes")) {
         return (oldWay.nodeKeyValues.contains("highway=give_way") || oldWay.nodeKeyValues.contains("highway=stop")) && oldWay.nodeKeyValues.contains("direction=backward");
       } else {
